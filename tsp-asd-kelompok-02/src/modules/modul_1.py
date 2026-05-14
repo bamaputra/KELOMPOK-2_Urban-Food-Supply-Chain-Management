@@ -1,21 +1,12 @@
-"""
-Module 1: Graph Rantai Pasok
-Graf berbobot tidak berarah dengan dua atribut edge: jarak_km dan biaya_per_km
-Mendukung: tambah_node, tambah_jalur, tetangga
-DFS/BFS untuk audit konektivitas
-Big-O: add O(1), BFS/DFS O(V+E)
-"""
-
 class Edge:
-    def __init__(self, dest, jarak_km, biaya_per_km):
+    def _init_(self, dest, jarak_km, biaya_per_km):
         self.dest = dest
         self.jarak_km = jarak_km
         self.biaya_per_km = biaya_per_km
         self.next = None
 
-
 class GraphRantaiPasok:
-    def __init__(self):
+    def _init_(self):
         self.adj = {}
         self.tipe_node = {}
 
@@ -35,7 +26,7 @@ class GraphRantaiPasok:
         new_edge.next = self.adj[v]
         self.adj[v] = new_edge
 
-    def tetangga(self, u):
+  def tetangga(self, u):
         """Mendapatkan semua tetangga dari node u"""
         neighbors = []
         current = self.adj.get(u, None)
@@ -79,3 +70,4 @@ class GraphRantaiPasok:
 
     def get_all_nodes(self):
         return list(self.adj.keys())
+
