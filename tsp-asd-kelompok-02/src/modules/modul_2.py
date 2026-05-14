@@ -1,13 +1,5 @@
-"""
-Module 2: Circular Queue Buffer Gudang
-Setiap node memiliki Circular Queue berbasis array (fixed capacity=50)
-untuk menyimpan produk secara FIFO
-Prinsip FIFO mencegah penumpukan produk lama
-Big-O: enqueue O(1), dequeue O(1), is_full O(1)
-"""
-
 class CircularQueue:
-    def __init__(self, kapasitas=50):
+    def _init_(self, kapasitas=50):
         self.kapasitas = kapasitas
         self.buffer = [None] * kapasitas
         self.front = 0
@@ -23,7 +15,7 @@ class CircularQueue:
         self._size += 1
         return True
 
-    def dequeue(self):
+ def dequeue(self):
         """Mengeluarkan produk dari buffer (FIFO) - Big-O: O(1)"""
         if self.is_empty():
             return None
@@ -41,7 +33,7 @@ class CircularQueue:
         """Cek apakah buffer kosong"""
         return self._size == 0
 
-    def __len__(self):
+    def _len_(self):
         return self._size
 
     def get_all(self):
