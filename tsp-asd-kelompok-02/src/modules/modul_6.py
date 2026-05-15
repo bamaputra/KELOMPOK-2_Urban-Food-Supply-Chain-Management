@@ -100,8 +100,6 @@ def generate_rantai_pasok(seed=61):
         edges.append((nodes[i][0], nodes[j][0], jarak, biaya))
     
     # Generate produk
-    nama_p = ['Beras', 'Cabai', 'Tomat', 'Ayam', 'Ikan Lele', 'Kangkung',
-              'Wortel', 'Kentang', 'Telur', 'Tahu', 'Tempe', 'Minyak']
     produk = []
     for i, nm in enumerate(nama_p):
         produk.append(Produk(
