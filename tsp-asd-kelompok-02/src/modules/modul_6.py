@@ -90,14 +90,7 @@ TIPE_NODE = ['PETANI', 'DISTRIBUTOR', 'PASAR', 'GUDANG']
                 break
 
             elif cmd[0].upper() == 'BANTUAN':
-                print('\nDaftar Perintah:')
-                print('  KIRIM <dari> <ke> <kode> <jumlah> - Kirim produk dari node ke node')
-                print('  PROSES_KIRIM - Proses pengiriman dengan prioritas tertinggi')
-                print('  RUTE_MURAH <dari> <ke> - Cari rute termurah antara dua node')
-                print('  CEK_STOK <kode> - Cek stok produk di katalog')
-                print('  KADALUARSA <maks_hari> - Lihat produk dengan kadaluarsa <= maks_hari')
-                print('  LAPORAN_DISTRIBUSI - Tampilkan semua transaksi pengiriman')
-                print('  BUFFER <node> - Lihat isi buffer gudang suatu node')
+              
 
             elif cmd[0].upper() == 'KIRIM':
                 if len(cmd) != 5:
