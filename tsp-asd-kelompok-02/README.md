@@ -1,6 +1,19 @@
 # KELOMPOK-2_Urban-Food-Supply-Chain-Management
 topik 10 Urban Food Supply Chain Management
 
+## Team
+1. MUHAMMAD SURYA ALDO 25051030046 *KETUA*
+2. FARHAN FAJARI FADHULURRAHMAN 25051030043
+3. AHMAD NIRO YOGARA 25051030051
+4. DECO ARDIANDRA 25051030069
+
+---
+
+## Mata Kuliah
+Algoritma dan Struktur Data  
+Teknik Elektro  
+Universitas Negeri Yogyakarta
+
 ## Deskripsi Project
 Project ini merupakan implementasi sistem manajemen rantai pasok pangan perkotaan menggunakan bahasa Python dan konsep Algoritma Struktur Data.
 
@@ -48,18 +61,3 @@ tests/         -> pengujian program
 experiments/   -> eksperimen dan analisis
 
 ---
-
-## Team
-1. UHAMMAD SURYA ALDO
-25051030046
-KETUA
-2. 
-3. 
-4. Deco Ardiandra 25051030069
-
----
-
-## Mata Kuliah
-Algoritma dan Struktur Data  
-Teknik Elektro  
-Universitas Negeri Yogyakarta
