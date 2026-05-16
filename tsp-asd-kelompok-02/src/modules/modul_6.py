@@ -33,24 +33,6 @@ class Produk:
     masa_kadaluarsa_hari: int
 
 
-@dataclass
-class Pengiriman:
-    pengiriman_id: int
-    dari_node: str
-    ke_node: str
-    kode_produk: str
-    jumlah: int
-    prioritas: int
-    waktu_kirim: float
-    
-    def __init__(self, pengiriman_id, dari_node, ke_node, kode_produk, jumlah, prioritas, waktu_kirim=None):
-        self.pengiriman_id = pengiriman_id
-        self.dari_node = dari_node
-        self.ke_node = ke_node
-        self.kode_produk = kode_produk
-        self.jumlah = jumlah
-        self.prioritas = prioritas
-        self.waktu_kirim = waktu_kirim if waktu_kirim else time.time()
 
 
 # Konstanta
