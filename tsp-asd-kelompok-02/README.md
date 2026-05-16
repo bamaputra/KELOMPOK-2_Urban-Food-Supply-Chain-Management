@@ -27,7 +27,7 @@ Project ini menggunakan beberapa struktur data utama, yaitu:
   - Merepresentasikan jaringan rantai pasok.
 - Algoritma Dijkstra
   - Menentukan jalur distribusi dengan biaya termurah.
-  - 
+    
 ---
 
 ## Fitur Program
