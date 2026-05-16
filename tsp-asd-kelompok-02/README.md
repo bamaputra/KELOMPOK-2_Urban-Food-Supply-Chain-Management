@@ -17,22 +17,17 @@ Project ini menggunakan beberapa struktur data utama, yaitu:
 
 - Binary Search Tree (BST)
   - Mengelola katalog produk dan pencarian stok.
-
 - Priority Queue
   - Mengatur prioritas pengiriman berdasarkan masa kadaluarsa.
-
 - Stack
   - Menyimpan log transaksi distribusi.
-
 - Circular Queue
   - Buffer penyimpanan produk pada gudang.
-
 - Graph
   - Merepresentasikan jaringan rantai pasok.
-
 - Algoritma Dijkstra
   - Menentukan jalur distribusi dengan biaya termurah.
-
+  - 
 ---
 
 ## Fitur Program
