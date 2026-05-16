@@ -295,55 +295,7 @@ def main():
                     for p in produk_kadaluarsa:
                         if p.masa_kadaluarsa_hari <= 3:
                             status = 'MENDESAK!'
-                        elif p.masa_kadaluarsa_hari <= 7:
-                            status = 'Perhatikan'
-                        else:
-                            status = 'Normal'
-                        print(f'  {p.kode} | {p.nama:12} | Stok: {p.stok:3} | Kadaluarsa: {p.masa_kadaluarsa_hari:2} hari | {status}')
-
-            elif cmd[0].upper() == 'LAPORAN_DISTRIBUSI':
-                print('\n' + '=' * 60)
-                print('LAPORAN TRANSAKSI DISTRIBUSI')
-                print('=' * 60)
-
-                transaksi_list = log_transaksi.get_all()
-
-                if not transaksi_list:
-                    print('Belum ada transaksi distribusi')
-                else:
-                    for i, transaksi in enumerate(transaksi_list, 1):
-                        print(f'{i}. {transaksi}')
-                print('=' * 60)
-
-            elif cmd[0].upper() == 'BUFFER':
-                if len(cmd) != 2:
-                    print('Format: BUFFER <node>')
-                    continue
-
-                _, node = cmd
-
-                if node not in buffer_gudang:
-                    print(f'Node {node} tidak ditemukan atau bukan gudang')
-                    continue
-
-                buffer = buffer_gudang[node]
-                if buffer.is_empty():
-                    print(f'Buffer gudang {node} kosong')
-                else:
-                    print(f'\nIsi buffer gudang {node}:')
-                    print('-' * 50)
-                    for i, p in enumerate(buffer.get_all(), 1):
-                        print(f'  {i}. {p.kode} | {p.nama} | Stok: {p.stok} | Kadaluarsa: {p.masa_kadaluarsa_hari} hari')
-
-            else:
-                print(f'Perintah tidak dikenal: {cmd[0]}. Ketik BANTUAN untuk daftar perintah.')
-
-        except KeyboardInterrupt:
-            print('\nKeluar dari sistem...')
-            break
-        except Exception as e:
-            print(f'Terjadi kesalahan: {e}')
-
+                     
 
 if __name__ == '__main__':
     main()
