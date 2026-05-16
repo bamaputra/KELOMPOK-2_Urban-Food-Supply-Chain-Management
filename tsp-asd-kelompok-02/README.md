@@ -46,3 +46,20 @@ docs/          -> laporan dan slide presentasi
 src/           -> source code utama
 tests/         -> pengujian program
 experiments/   -> eksperimen dan analisis
+
+---
+
+## Team
+1. UHAMMAD SURYA ALDO
+25051030046
+KETUA
+2. 
+3. 
+4. Deco Ardiandra 25051030069
+
+---
+
+## Mata Kuliah
+Algoritma dan Struktur Data  
+Teknik Elektro  
+Universitas Negeri Yogyakarta
