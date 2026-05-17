@@ -104,4 +104,3 @@ def hitung_semua_rute_biaya(graph):
                 semua_rute.append((f"{asal}->{tujuan}", dist[tujuan]))
     
     return merge_sort_jalur(semua_rute)
-
