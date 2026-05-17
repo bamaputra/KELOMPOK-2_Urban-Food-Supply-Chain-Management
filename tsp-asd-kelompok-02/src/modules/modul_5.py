@@ -72,26 +72,6 @@ def hitung_prioritas(masa_kadaluarsa):
         return 3  # REGULER
 
 
-def prioritas_to_text(prioritas):
-    """Konversi nilai prioritas ke teks"""
-    return {1: 'MENDESAK', 2: 'NORMAL', 3: 'REGULER'}.get(prioritas, 'UNKNOWN')
-
-
-def merge_sort_jalur(jalur_list):
-    """
-    Merge Sort untuk mengurutkan jalur berdasarkan biaya
-    Digunakan untuk audit biaya
-    """
-    if len(jalur_list) <= 1:
-        return jalur_list
-    
-    mid = len(jalur_list) // 2
-    left = merge_sort_jalur(jalur_list[:mid])
-    right = merge_sort_jalur(jalur_list[mid:])
-    
-    return _merge(left, right)
-
-
 def _merge(left, right):
     result = []
     i = j = 0
