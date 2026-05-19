@@ -134,3 +134,72 @@ def main():
     for u, v, j, b in edges:
         graph.tambah_jalur(u, v, j, b)
  
+    for p in produk_list:
+        bst_katalog.insert(p)
+ 
+    # Hitung statistik edge untuk info
+    total_outgoing = 0
+    pasar_outgoing = 0
+    for nid in graph.adj:
+        count = len(graph.tetangga(nid))
+        total_outgoing += count
+        if graph.tipe_node[nid] == 'PASAR':
+            pasar_outgoing += count
+ 
+    print('=' * 65)
+    print('  Food Supply Chain Management System')
+    print('  [ATURAN: PASAR hanya bisa MENERIMA, TIDAK bisa MENGIRIM]')
+    print('=' * 65)
+    print(f'  Total Node   : {len(nodes)}')
+    print(f'    PETANI      : {sum(1 for _, t in nodes if t == "PETANI")}')
+    print(f'    DISTRIBUTOR : {sum(1 for _, t in nodes if t == "DISTRIBUTOR")}')
+    print(f'    PASAR       : {sum(1 for _, t in nodes if t == "PASAR")} (sink-only)')
+    print(f'    GUDANG      : {sum(1 for _, t in nodes if t == "GUDANG")}')
+    print(f'  Total Produk : {len(produk_list)}')
+    print(f'  Edge keluar dari PASAR: {pasar_outgoing} (blokir)')
+    print('=' * 65)
+    print('Perintah yang tersedia:')
+    print('  KIRIM <dari> <ke> <kode> <jumlah>')
+    print('  PROSES_KIRIM')
+    print('  RUTE_MURAH <dari> <ke>')
+    print('  CEK_STOK <kode>')
+    print('  KADALUARSA <maks_hari>')
+    print('  LAPORAN_DISTRIBUSI')
+    print('  BUFFER <node>')
+    print('  INFO_JARINGAN')
+    print('  BANTUAN')
+    print('  KELUAR')
+    print('=' * 65)
+ 
+    while True:
+        try:
+            cmd = input('\n> ').strip().split()
+            if not cmd:
+                continue
+ 
+            # KELUAR
+            if cmd[0].upper() == 'KELUAR':
+                print('Terima kasih telah menggunakan sistem manajemen rantai pasok!')
+                break
+ 
+            # BANTUAN
+            elif cmd[0].upper() == 'BANTUAN':
+                print('\nDaftar Perintah:')
+                print('  KIRIM <dari> <ke> <kode> <jumlah>')
+                print('      Kirim produk dari node ke node')
+                print('      *** PASAR tidak bisa menjadi pengirim! ***')
+                print('  PROSES_KIRIM')
+                print('      Proses pengiriman dengan prioritas tertinggi')
+                print('  RUTE_MURAH <dari> <ke>')
+                print('      Cari rute termurah antara dua node')
+                print('      *** Tidak bisa mencari rute dari PASAR! ***')
+                print('  CEK_STOK <kode>')
+                print('      Cek stok produk di katalog')
+                print('  KADALUARSA <maks_hari>')
+                print('      Lihat produk dengan kadaluarsa <= maks_hari')
+                print('  LAPORAN_DISTRIBUSI')
+                print('      Tampilkan semua transaksi pengiriman')
+                print('  BUFFER <node>')
+                print('      Lihat isi buffer gudang suatu node')
+                print('  INFO_JARINGAN')
+                print('      Tampilkan struktur jaringan & aturan PASAR')
