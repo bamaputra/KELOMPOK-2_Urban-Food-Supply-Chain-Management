@@ -1,4 +1,4 @@
-class Edge:
+class Edge: # digunakan untuk menyimpan data jalur antar node.
     def __init__(self, dest, jarak_km, biaya_per_km):
         self.dest = dest
         self.jarak_km = jarak_km
@@ -6,7 +6,7 @@ class Edge:
         self.next = None
  
  
-class GraphRantaiPasok:
+class GraphRantaiPasok: # Class utama untuk membuat dan mengelola graf distribusi pangan.
     def __init__(self):
         self.adj = {}
         self.tipe_node = {}
