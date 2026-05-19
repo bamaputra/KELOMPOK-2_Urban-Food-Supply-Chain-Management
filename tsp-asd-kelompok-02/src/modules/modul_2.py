@@ -1,68 +1,65 @@
-# graph_rantai_pasok.py
-class Edge:
-    def __init__(self, dest, jarak_km, biaya_per_km):
-        self.dest = dest
-        self.jarak_km = jarak_km
-        self.biaya_per_km = biaya_per_km
-        self.next = None
- 
- 
-class GraphRantaiPasok:
+# modul2_circular_queue.py
+ 
+class CircularQueue:
     """
-    Graph berarah untuk rantai pasok.
-    ATURAN: PASAR hanya memiliki edge masuk (tidak bisa mengirim).
-    Semua edge yang melibatkan PASAR hanya satu arah menuju PASAR.
+    Setiap node memiliki Circular Queue berbasis array (fixed capacity=50)
+    untuk menyimpan produk secara FIFO.
+    Produk masuk (enqueue) dari supplier, keluar (dequeue) ke tujuan berikutnya.
+    Prinsip FIFO mencegah penumpukan produk lama.
+    Big-O: enqueue O(1), dequeue O(1), is_full O(1).
     """
- 
-    def __init__(self):
-        self.adj = {}
-        self.tipe_node = {}
- 
-    def tambah_node(self, node_id, tipe):
-        if node_id not in self.adj:
-            self.adj[node_id] = None
-            self.tipe_node[node_id] = tipe
- 
-    def tambah_jalur(self, u, v, jarak, biaya_km):
-        """
-        Menambahkan jalur dengan aturan:
-        - Jika u adalah PASAR → tidak menambah edge u→v (PASAR tidak bisa mengirim)
-        - Jika v adalah PASAR → tidak menambah edge v→u (PASAR tidak bisa mengirim)
-        - Jika keduanya PASAR → tidak menambah edge sama sekali
-        - Jika keduanya bukan PASAR → menambahkan edge dua arah seperti biasa
-        """
-        tipe_u = self.tipe_node.get(u, '')
-        tipe_v = self.tipe_node.get(v, '')
- 
-        # u → v : hanya jika u BUKAN PASAR
-        if tipe_u != 'PASAR':
-            new_edge = Edge(v, jarak, biaya_km)
-            new_edge.next = self.adj[u]
-            self.adj[u] = new_edge
- 
-        # v → u : hanya jika v BUKAN PASAR
-        if tipe_v != 'PASAR':
-            new_edge = Edge(u, jarak, biaya_km)
-            new_edge.next = self.adj[v]
-            self.adj[v] = new_edge
- 
-    def tetangga(self, u):
-        """Mengembalikan daftar tetangga yang bisa dicapai dari u (outgoing edges)"""
-        neighbors = []
-        current = self.adj.get(u, None)
-        while current:
-            neighbors.append((current.dest, current.jarak_km, current.biaya_per_km))
-            current = current.next
-        return neighbors
- 
-    def bisa_mengirim(self, node_id):
-        """Cek apakah sebuah node boleh mengirim produk"""
-        return self.tipe_node.get(node_id, '') != 'PASAR'
- 
-    def info_node(self, node_id):
-        """Mengembalikan informasi tipe node"""
-        return self.tipe_node.get(node_id, 'TIDAK DIKENAL')
- 
-    def get_all_nodes(self):
-        """Mengembalikan semua node dalam graph"""
-        return [(node, self.tipe_node[node]) for node in self.adj]
+    
+    def __init__(self, kapasitas=50):
+        self.kapasitas = kapasitas
+        self.buffer = [None] * kapasitas
+        self.front = 0
+        self.rear = 0
+        self._size = 0
+ 
+    def enqueue(self, produk):
+        """Memasukkan produk ke buffer - O(1)"""
+        if self.is_full():
+            return False
+        self.buffer[self.rear] = produk
+        self.rear = (self.rear + 1) % self.kapasitas
+        self._size += 1
+        return True
+ 
+    def dequeue(self):
+        """Mengeluarkan produk dari buffer - O(1)"""
+        if self.is_empty():
+            return None
+        produk = self.buffer[self.front]
+        self.buffer[self.front] = None
+        self.front = (self.front + 1) % self.kapasitas
+        self._size -= 1
+        return produk
+ 
+    def is_full(self):
+        """Cek apakah buffer penuh - O(1)"""
+        return self._size == self.kapasitas
+ 
+    def is_empty(self):
+        """Cek apakah buffer kosong - O(1)"""
+        return self._size == 0
+ 
+    def __len__(self):
+        return self._size
+ 
+    def get_all(self):
+        """Mendapatkan semua isi buffer (untuk display)"""
+        result = []
+        if self.is_empty():
+            return result
+        idx = self.front
+        for _ in range(self._size):
+            if self.buffer[idx] is not None:
+                result.append(self.buffer[idx])
+            idx = (idx + 1) % self.kapasitas
+        return result
+ 
+    def peek(self):
+        """Melihat produk terdepan tanpa menghapus"""
+        if self.is_empty():
+            return None
+        return self.buffer[self.front]
