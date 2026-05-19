@@ -203,3 +203,72 @@ def main():
                 print('      Lihat isi buffer gudang suatu node')
                 print('  INFO_JARINGAN')
                 print('      Tampilkan struktur jaringan & aturan PASAR')
+                print('  KELUAR')
+                print('      Keluar dari sistem')
+ 
+            # INFO_JARINGAN
+            elif cmd[0].upper() == 'INFO_JARINGAN':
+                print('\n' + '=' * 65)
+                print('INFORMASI JARINGAN RANTAI PASOK')
+                print('=' * 65)
+ 
+                print('\nDaftar Node:')
+                print(f'  {"ID":<8} {"TIPE":<14} {"Bisa Kirim?":<14} {"Jml Tetangga Keluar"}')
+                print('  ' + '-' * 55)
+                for nid, tipe in nodes:
+                    bisa = 'YA' if tipe != 'PASAR' else 'TIDAK (PASAR)'
+                    jml = len(graph.tetangga(nid))
+                    print(f'  {nid:<8} {tipe:<14} {bisa:<14} {jml}')
+ 
+                print('\nAlur Rantai Pasok:')
+                print('  PETANI ──► DISTRIBUTOR ──► PASAR  (PASAR = ujung/sink)')
+                print('              DISTRIBUTOR ──► GUDANG')
+                print('              GUDANG ──► PASAR')
+                print('  *** PASAR TIDAK PERNAH MENJADI PENGIRIM ***')
+                print('=' * 65)
+ 
+            # KIRIM
+            elif cmd[0].upper() == 'KIRIM':
+                if len(cmd) != 5:
+                    print('Format: KIRIM <dari> <ke> <kode> <jumlah>')
+                    continue
+ 
+                _, dari, ke, kode, jumlah_str = cmd
+                try:
+                    jumlah = int(jumlah_str)
+                except ValueError:
+                    print('Jumlah harus berupa angka!')
+                    continue
+ 
+                if jumlah <= 0:
+                    print('Jumlah harus lebih dari 0!')
+                    continue
+ 
+                if dari not in graph.adj or ke not in graph.adj:
+                    print('Node tidak ditemukan!')
+                    continue
+ 
+                if graph.tipe_node.get(dari) == 'PASAR':
+                    print(f'✗ DITOLAK! Node {dari} adalah PASAR.')
+                    print('  PASAR hanya bisa MENERIMA produk, tidak bisa MENGIRIM!')
+                    continue
+ 
+                produk = bst_katalog.search(kode)
+                if not produk:
+                    print(f'Produk dengan kode {kode} tidak ditemukan!')
+                    continue
+ 
+                if produk.stok < jumlah:
+                    print(f'Stok tidak mencukupi! Stok tersedia: {produk.stok}')
+                    continue
+ 
+                bst_katalog.update_stok(kode, -jumlah)
+ 
+                prioritas = hitung_prioritas(produk.masa_kadaluarsa_hari)
+                prioritas_text = get_prioritas_text(prioritas)
+ 
+                kirim_counter += 1
+                pengiriman = Pengiriman(
+                    pengiriman_id=kirim_counter,
+                    dari_node=dari,
+                    ke_node=ke,
