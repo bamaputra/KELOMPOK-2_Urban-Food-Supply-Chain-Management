@@ -339,3 +339,73 @@ def main():
                     print('  PASAR hanya bisa MENERIMA produk, tidak bisa MENGIRIM!')
                     print('  Tidak ada rute keluar dari PASAR.')
                     continue
+ 
+                dist, parent = dijkstra_biaya(graph, dari)
+ 
+                if dist[ke] == float('inf'):
+                    print(f'Tidak ada jalur dari {dari} ke {ke}')
+                    continue
+ 
+                path = get_path(parent, ke)
+                print(f'\nJalur termurah dari {dari} ke {ke}:')
+                path_labeled = []
+                for node_id in path:
+                    tipe = graph.tipe_node.get(node_id, '?')
+                    path_labeled.append(f'{node_id}({tipe})')
+                print(' → '.join(path_labeled))
+                print(f'Total biaya: Rp {dist[ke]:,.2f}')
+ 
+            # CEK_STOK
+            elif cmd[0].upper() == 'CEK_STOK':
+                if len(cmd) != 2:
+                    print('Format: CEK_STOK <kode>')
+                    continue
+ 
+                _, kode = cmd
+                produk = bst_katalog.search(kode)
+ 
+                if not produk:
+                    print(f'Produk dengan kode {kode} tidak ditemukan!')
+                else:
+                    print(f'\nDetail Produk:')
+                    print(f'  Kode          : {produk.kode}')
+                    print(f'  Nama          : {produk.nama}')
+                    print(f'  Kategori      : {produk.kategori}')
+                    print(f'  Harga         : Rp {produk.harga_satuan:,.2f}')
+                    print(f'  Stok          : {produk.stok}')
+                    print(f'  Kadaluarsa    : {produk.masa_kadaluarsa_hari} hari')
+                    prioritas = hitung_prioritas(produk.masa_kadaluarsa_hari)
+                    ket = {1: 'MENDESAK', 2: 'NORMAL', 3: 'REGULER'}
+                    print(f'  Prioritas     : {ket[prioritas]}')
+ 
+            # KADALUARSA
+            elif cmd[0].upper() == 'KADALUARSA':
+                if len(cmd) != 2:
+                    print('Format: KADALUARSA <maks_hari>')
+                    continue
+ 
+                try:
+                    maks_hari = int(cmd[1])
+                except ValueError:
+                    print('Maks hari harus berupa angka!')
+                    continue
+ 
+                produk_kadaluarsa = bst_katalog.filter_kadaluarsa(maks_hari)
+ 
+                if not produk_kadaluarsa:
+                    print(f'Tidak ada produk dengan masa kadaluarsa <= {maks_hari} hari')
+                else:
+                    print(f'\nProduk dengan masa kadaluarsa <= {maks_hari} hari:')
+                    print('-' * 70)
+                    print(f'  {"Kode":<10} {"Nama":<12} {"Stok":>5} {"Kadaluarsa":>12} {"Status"}')
+                    print('-' * 70)
+                    for p in produk_kadaluarsa:
+                        if p.masa_kadaluarsa_hari <= 3:
+                            status = '⚠ MENDESAK!'
+                        elif p.masa_kadaluarsa_hari <= 7:
+                            status = '⚡ Perhatikan'
+                        else:
+                            status = '✓ Normal'
+                        print(
+                            f'  {p.kode:<10}
+ 
