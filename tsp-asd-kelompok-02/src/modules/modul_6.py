@@ -272,3 +272,70 @@ def main():
                     pengiriman_id=kirim_counter,
                     dari_node=dari,
                     ke_node=ke,
+                    kode_produk=kode,
+                    jumlah=jumlah,
+                    prioritas=prioritas,
+                    waktu_kirim=time.time()
+                )
+ 
+                pg_kirim.enqueue(pengiriman)
+ 
+                tipe_dari = graph.tipe_node.get(dari, '')
+                tipe_ke = graph.tipe_node.get(ke, '')
+                print(f'✓ Pengiriman #{kirim_counter} ditambahkan ke antrian')
+                print(f'  {dari} ({tipe_dari}) ──► {ke} ({tipe_ke})')
+                print(f'  Produk: {produk.nama} x{jumlah}')
+                print(f'  Prioritas: {prioritas_text}')
+ 
+            # PROSES_KIRIM
+            elif cmd[0].upper() == 'PROSES_KIRIM':
+                if pg_kirim.is_empty():
+                    print('Tidak ada pengiriman dalam antrian')
+                    continue
+ 
+                pengiriman = pg_kirim.dequeue()
+                if not pengiriman:
+                    print('Gagal memproses pengiriman')
+                    continue
+ 
+                tipe_tujuan = graph.tipe_node.get(pengiriman.ke_node, '')
+                if tipe_tujuan == 'GUDANG':
+                    produk = bst_katalog.search(pengiriman.kode_produk)
+                    if produk:
+                        success = buffer_gudang[pengiriman.ke_node].enqueue(produk)
+                        if success:
+                            print(f'  → Produk disimpan ke buffer gudang {pengiriman.ke_node}')
+                        else:
+                            print(f'  → Buffer gudang {pengiriman.ke_node} penuh! Produk tidak tersimpan')
+                elif tipe_tujuan == 'PASAR':
+                    print(f'  → Produk diterima oleh PASAR {pengiriman.ke_node}')
+ 
+                prioritas_text = get_prioritas_text(pengiriman.prioritas)
+ 
+                log_entry = (
+                    f'[ID:{pengiriman.pengiriman_id}] '
+                    f'{pengiriman.dari_node} → {pengiriman.ke_node} | '
+                    f'{pengiriman.kode_produk} x{pengiriman.jumlah} | '
+                    f'Prioritas:{prioritas_text}'
+                )
+                log_transaksi.push(log_entry)
+ 
+                print(f'✓ Pengiriman #{pengiriman.pengiriman_id} diproses')
+ 
+            # RUTE_MURAH
+            elif cmd[0].upper() == 'RUTE_MURAH':
+                if len(cmd) != 3:
+                    print('Format: RUTE_MURAH <dari> <ke>')
+                    continue
+ 
+                _, dari, ke = cmd
+ 
+                if dari not in graph.adj or ke not in graph.adj:
+                    print('Node tidak ditemukan!')
+                    continue
+ 
+                if graph.tipe_node.get(dari) == 'PASAR':
+                    print(f'✗ DITOLAK! Node {dari} adalah PASAR.')
+                    print('  PASAR hanya bisa MENERIMA produk, tidak bisa MENGIRIM!')
+                    print('  Tidak ada rute keluar dari PASAR.')
+                    continue
