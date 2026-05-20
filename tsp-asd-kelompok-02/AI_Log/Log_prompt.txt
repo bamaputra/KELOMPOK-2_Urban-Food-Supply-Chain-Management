@@ -1,1 +1,2 @@
-
+Versi Pertama: Tolong jelaskan makna dari tugas tersbut serta berikan contoh code program yang hampir sama seperti dimodul tanpa mengganti code seperti dicontoh.
+Vesi kedua: tolong jelaskan makna code program tersebut pada outputnya dan jelaskan fungsi code yeng digunakan untuk sehari hari.
