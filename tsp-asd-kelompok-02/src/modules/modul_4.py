@@ -1,11 +1,13 @@
-# modul4_bst_katalog.py
-from dataclasses import dataclass
-from typing import Optional, List
+# bst_katalog_produk.py
+# BST dengan kunci = kode_produk
+# Menyimpan: kode, nama, kategori, harga, stok, masa_kadaluarsa
+# Mendukung: insert, search, update_stok, filter_kadaluarsa(maks_hari)
+# Big-O: O(log n) rata-rata
  
+from dataclasses import dataclass
  
 @dataclass
 class Produk:
-    """Data class untuk menyimpan informasi produk"""
     kode: str
     nama: str
     kategori: str
@@ -15,7 +17,6 @@ class Produk:
  
  
 class BSTNodeProd:
-    """Node untuk BST"""
     def __init__(self, produk):
         self.produk = produk
         self.left = None
@@ -23,18 +24,11 @@ class BSTNodeProd:
  
  
 class BSTKatalog:
-    """
-    BST dengan kunci = kode_produk.
-    Menyimpan: kode, nama, kategori, harga, stok, masa_kadaluarsa.
-    Mendukung: insert, search, update_stok, filter_kadaluarsa(maks_hari) (inorder dengan filter), inorder.
-    Big-O: O(log n) rata-rata.
-    """
-    
     def __init__(self):
         self.root = None
  
     def insert(self, produk):
-        """Memasukkan produk ke BST - O(log n) rata-rata"""
+        """Menambahkan produk ke BST"""
         self.root = self._insert_rec(self.root, produk)
  
     def _insert_rec(self, node, produk):
@@ -47,7 +41,7 @@ class BSTKatalog:
         return node
  
     def search(self, kode):
-        """Mencari produk berdasarkan kode - O(log n) rata-rata"""
+        """Mencari produk berdasarkan kode"""
         return self._search_rec(self.root, kode)
  
     def _search_rec(self, node, kode):
@@ -58,10 +52,7 @@ class BSTKatalog:
         return self._search_rec(node.right, kode)
  
     def update_stok(self, kode, delta):
-        """
-        Mengupdate stok produk - O(log n) rata-rata
-        delta bisa positif (tambah stok) atau negatif (kurangi stok)
-        """
+        """Memperbarui stok produk (delta bisa positif atau negatif)"""
         produk = self.search(kode)
         if produk:
             produk.stok += delta
@@ -71,10 +62,7 @@ class BSTKatalog:
         return False
  
     def filter_kadaluarsa(self, maks_hari):
-        """
-        Filter produk dengan masa kadaluarsa <= maks_hari - O(n)
-        Menggunakan inorder traversal
-        """
+        """Mengembalikan produk dengan masa kadaluarsa <= maks_hari"""
         result = []
         self._filter_rec(self.root, maks_hari, result)
         return result
@@ -88,7 +76,7 @@ class BSTKatalog:
         self._filter_rec(node.right, maks_hari, result)
  
     def inorder(self):
-        """Inorder traversal untuk menampilkan semua produk terurut - O(n)"""
+        """Traversal inorder untuk menampilkan semua produk terurut"""
         result = []
         self._inorder_rec(self.root, result)
         return result
@@ -99,21 +87,3 @@ class BSTKatalog:
         self._inorder_rec(node.left, result)
         result.append(node.produk)
         self._inorder_rec(node.right, result)
- 
-    def get_min(self):
-        """Mendapatkan produk dengan kode terkecil"""
-        if self.root is None:
-            return None
-        current = self.root
-        while current.left:
-            current = current.left
-        return current.produk
- 
-    def get_max(self):
-        """Mendapatkan produk dengan kode terbesar"""
-        if self.root is None:
-            return None
-        current = self.root
-        while current.right:
-            current = current.right
-        return current.produk
