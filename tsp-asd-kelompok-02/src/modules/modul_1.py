@@ -1,5 +1,9 @@
-# modul1_graph.py
-from typing import List, Tuple, Dict, Optional
+# graph_rantai_pasok.py
+# Graf berbobot tidak berarah dengan dua atribut edge: jarak_km dan biaya_per_km
+# Dijkstra menggunakan total_biaya = jarak * biaya_km sebagai bobot
+# Mendukung: tambah_node, tambah_jalur, tetangga
+# DFS/BFS untuk audit konektivitas
+# Big-O: add O(1), BFS/DFS O(V+E)
  
 class Edge:
     def __init__(self, dest, jarak_km, biaya_per_km):
@@ -11,11 +15,12 @@ class Edge:
  
 class GraphRantaiPasok:
     """
-    Graf berbobot tidak berarah dengan dua atribut edge: jarak_km dan biaya_per_km.
-    Dijkstra menggunakan total_biaya = jarak * biaya_km sebagai bobot.
-    Mendukung: tambah_node, tambah_jalur, tetangga.
-    DFS/BFS untuk audit konektivitas.
-    Big-O: add O(1), BFS/DFS O(V+E).
+    Graph berarah untuk rantai pasok.
+    ATURAN:
+    - PETANI bisa mengirim ke DISTRIBUTOR, GUDANG, PASAR
+    - DISTRIBUTOR bisa mengirim ke DISTRIBUTOR, GUDANG, PASAR
+    - GUDANG bisa mengirim ke PASAR
+    - PASAR TIDAK BISA mengirim (sink node)
     """
     
     def __init__(self):
@@ -30,25 +35,30 @@ class GraphRantaiPasok:
     def tambah_jalur(self, u, v, jarak, biaya_km):
         """
         Menambahkan jalur dengan aturan:
-        - Jika u adalah PASAR → tidak menambah edge u→v (PASAR tidak bisa mengirim)
-        - Jika v adalah PASAR → tidak menambah edge v→u (PASAR tidak bisa mengirim)
-        - Jika keduanya PASAR → tidak menambah edge sama sekali
-        - Jika keduanya bukan PASAR → menambahkan edge dua arah seperti biasa
+        - PASAR tidak bisa memiliki edge keluar
+        - Validasi berdasarkan hierarki rantai pasok
         """
         tipe_u = self.tipe_node.get(u, '')
         tipe_v = self.tipe_node.get(v, '')
- 
-        # u → v : hanya jika u BUKAN PASAR
-        if tipe_u != 'PASAR':
-            new_edge = Edge(v, jarak, biaya_km)
-            new_edge.next = self.adj[u]
-            self.adj[u] = new_edge
- 
-        # v → u : hanya jika v BUKAN PASAR
-        if tipe_v != 'PASAR':
-            new_edge = Edge(u, jarak, biaya_km)
-            new_edge.next = self.adj[v]
-            self.adj[v] = new_edge
+        
+        # VALIDASI: PASAR tidak boleh mengirim
+        if tipe_u == 'PASAR':
+            return
+        
+        # VALIDASI HIERARKI (opsional, untuk menjaga struktur)
+        if tipe_u == 'PETANI' and tipe_v not in ['DISTRIBUTOR', 'GUDANG', 'PASAR']:
+            return
+        
+        if tipe_u == 'DISTRIBUTOR' and tipe_v not in ['DISTRIBUTOR', 'GUDANG', 'PASAR']:
+            return
+        
+        if tipe_u == 'GUDANG' and tipe_v != 'PASAR':
+            return
+        
+        # Tambahkan edge u → v
+        new_edge = Edge(v, jarak, biaya_km)
+        new_edge.next = self.adj[u]
+        self.adj[u] = new_edge
  
     def tetangga(self, u):
         """Mengembalikan daftar tetangga yang bisa dicapai dari u (outgoing edges)"""
@@ -59,38 +69,98 @@ class GraphRantaiPasok:
             current = current.next
         return neighbors
  
-    def bisa_mengirim(self, node_id):
-        """Cek apakah sebuah node boleh mengirim produk"""
-        return self.tipe_node.get(node_id, '') != 'PASAR'
- 
-    def info_node(self, node_id):
-        """Mengembalikan informasi tipe node"""
-        return self.tipe_node.get(node_id, 'TIDAK DIKENAL')
- 
-    def bfs_audit(self, start):
-        """BFS untuk audit konektivitas - O(V+E)"""
+    def bfs(self, start):
+        """BFS untuk audit konektivitas"""
         visited = set()
         queue = [start]
         visited.add(start)
         
         while queue:
-            node = queue.pop(0)
-            for neighbor, _, _ in self.tetangga(node):
-                if neighbor not in visited:
-                    visited.add(neighbor)
-                    queue.append(neighbor)
+            u = queue.pop(0)
+            for v, _, _ in self.tetangga(u):
+                if v not in visited:
+                    visited.add(v)
+                    queue.append(v)
         return visited
  
-    def dfs_audit(self, start):
-        """DFS untuk audit konektivitas - O(V+E)"""
-        visited = set()
-        
-        def dfs_rec(node):
-            visited.add(node)
-            for neighbor, _, _ in self.tetangga(node):
-                if neighbor not in visited:
-                    dfs_rec(neighbor)
-        
-        dfs_rec(start)
+    def dfs(self, start, visited=None):
+        """DFS untuk audit konektivitas"""
+        if visited is None:
+            visited = set()
+        visited.add(start)
+        for v, _, _ in self.tetangga(start):
+            if v not in visited:
+                self.dfs(v, visited)
         return visited
  
+    def bisa_mengirim(self, node_id):
+        return self.tipe_node.get(node_id, '') != 'PASAR'
+    
+    def bisa_menerima(self, node_id):
+        return True
+ 
+    def info_node(self, node_id):
+        return self.tipe_node.get(node_id, 'TIDAK DIKENAL')
+    
+    def get_all_nodes(self):
+        return list(self.adj.keys())
+ 
+Modul 2: circular_queue_buffer.py
+# circular_queue_buffer.py
+# Setiap node memiliki Circular Queue berbasis array (fixed capacity=50)
+# untuk menyimpan produk secara FIFO
+# Big-O: enqueue O(1), dequeue O(1), is_full O(1)
+ 
+class CircularQueue:
+    def __init__(self, kapasitas=50):
+        self.kapasitas = kapasitas
+        self.buffer = [None] * kapasitas
+        self.front = 0
+        self.rear = 0
+        self._size = 0
+ 
+    def enqueue(self, produk):
+        """Memasukkan produk ke buffer (FIFO)"""
+        if self.is_full():
+            return False
+        self.buffer[self.rear] = produk
+        self.rear = (self.rear + 1) % self.kapasitas
+        self._size += 1
+        return True
+ 
+    def dequeue(self):
+        """Mengeluarkan produk dari buffer (FIFO)"""
+        if self.is_empty():
+            return None
+        produk = self.buffer[self.front]
+        self.buffer[self.front] = None
+        self.front = (self.front + 1) % self.kapasitas
+        self._size -= 1
+        return produk
+ 
+    def is_full(self):
+        return self._size == self.kapasitas
+ 
+    def is_empty(self):
+        return self._size == 0
+ 
+    def __len__(self):
+        return self._size
+ 
+    def get_all(self):
+        result = []
+        if self.is_empty():
+            return result
+        idx = self.front
+        for _ in range(self._size):
+            if self.buffer[idx] is not None:
+                result.append(self.buffer[idx])
+            idx = (idx + 1) % self.kapasitas
+        return result
+    
+    def clear(self):
+        """Mengosongkan buffer"""
+        self.buffer = [None] * self.kapasitas
+        self.front = 0
+        self.rear = 0
+        self._size = 0
